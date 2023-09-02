@@ -1,0 +1,29 @@
+{
+  "url": "http://localhost:4000/api/movies/addmovie",
+  "method": "post",
+  "backup": {
+    "bodyType": "raw",
+    "bodySubType": "json",
+    "rawData": "{\n \"director\": \"Victor Fleming\",\n            \"genre\": \"Adventure, Family, Fantasy, Musical\",\n            \"id\": 1,\n            \"imdb_score\": 8.3,\n            \"name\": \"The Wizard of Oz\",\n            \"popularity\": 83\n}"
+  },
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "data": {
+    "director": "Victor Fleming",
+    "genre": "Adventure, Family, Fantasy, Musical",
+    "id": 1,
+    "imdb_score": 8.3,
+    "name": "The Wizard of Oz",
+    "popularity": 83
+  },
+  "headersArray": [
+    [
+      "361865bd-2508-4d40-9ba5-4c9241dd2c18",
+      "Content-Type",
+      "application/json",
+      true,
+      "STRING"
+    ]
+  ]
+}
