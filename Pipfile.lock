@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "9748ebc6657c1e73f01ec2effd1a6f0aea1f198df8323a934a946f00fe443c45"
+            "sha256": "944c1bdaaec52a0745bc01e6d5a591383517f24ae18bbbdc7089ed095b7ec1f0"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -57,6 +57,15 @@
             "index": "pypi",
             "markers": "python_version >= '3.7' and python_version < '4'",
             "version": "==4.5.2"
+        },
+        "gunicorn": {
+            "hashes": [
+                "sha256:3213aa5e8c24949e792bcacfc176fef362e7aac80b76c56f6b5122bf350722f0",
+                "sha256:88ec8bff1d634f98e61b9f65bc4bf3cd918a90806c6f5c48bc5603849ec81033"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.5'",
+            "version": "==21.2.0"
         },
         "itsdangerous": {
             "hashes": [
@@ -158,6 +167,14 @@
             "markers": "python_version >= '3.8'",
             "version": "==8.1.0"
         },
+        "packaging": {
+            "hashes": [
+                "sha256:994793af429502c4ea2ebf6bf664629d07c1a9fe974af92966e4b8d2df7edc61",
+                "sha256:a392980d2b6cffa644431898be54b0045151319d1e7ec34f0cfed48767dd334f"
+            ],
+            "markers": "python_version >= '3.7'",
+            "version": "==23.1"
+        },
         "protobuf": {
             "hashes": [
                 "sha256:1f22ac0ca65bb70a876060d96d914dae09ac98d114294f77584b0d2644fa9c30",
@@ -188,12 +205,12 @@
         },
         "validators": {
             "hashes": [
-                "sha256:002ba1552076535176824e43149c18c06f6b611bc8b597ddbcf8770bcf5f9f5c",
-                "sha256:6ad95131005a9d4c734a69dd4ef08cf66961e61222e60da25a9b5137cecd6fd4"
+                "sha256:61cf7d4a62bbae559f2e54aed3b000cea9ff3e2fdbe463f51179b92c58c9585a",
+                "sha256:77b2689b172eeeb600d9605ab86194641670cdb73b60afd577142a9397873370"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.8'",
-            "version": "==0.21.2"
+            "version": "==0.22.0"
         },
         "werkzeug": {
             "hashes": [

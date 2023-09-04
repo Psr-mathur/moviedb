@@ -1,0 +1,5 @@
+flask 
+mysql-connector-python 
+validators 
+flask-jwt-extended 
+gunicorn 
