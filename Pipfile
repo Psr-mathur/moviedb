@@ -19,6 +19,7 @@ packaging = "==23.1"
 protobuf = "==4.21.12"
 pyjwt = "==2.8.0"
 werkzeug = "==2.3.7"
+python-dotenv = "*"
 
 [dev-packages]
 
