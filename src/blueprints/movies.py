@@ -37,7 +37,7 @@ def Get_movies():
         except Error:
             return make_response(jsonify({"error": "Server Error"}), 500)
 
-    director = request.args.get("director", "")
+    director = request.args.get("director")
     if director is not None:
         try:
             db_cursor.execute(
@@ -63,6 +63,23 @@ def Get_movies():
         return make_response(jsonify({"error": e}), 500)
 
 
+@movies.get("/<int:id>")
+def GetMoviebyID(id):
+    try:
+        db_cursor.execute("Select * from movies where id = %s", (id,))
+        rows = db_cursor.fetchall()
+        column_names = [desc[0] for desc in db_cursor.description]
+        movies = [dict(zip(column_names, row)) for row in rows]
+        if not len(movies):
+            return jsonify({"error": f"Movie does not Exist with id = {id}."}), 404
+
+        resp = make_response(jsonify({"data": movies[0]}), 200)
+
+        return resp
+    except Error as e:
+        return make_response(jsonify({"error": str(e)}), 500)
+
+
 @movies.post("/addmovie")
 @jwt_required()
 def Add_movie():
@@ -73,8 +90,10 @@ def Add_movie():
     popularity = request.json.get("popularity")
     if name is None:
         return make_response(jsonify({"error": "Name cannot be Empty"}), 400)
-    if imdb_score > 10:
-        return make_response(jsonify({"error": "IMDB_score must not exceed 10."}), 403)
+    if imdb_score > 10 or imdb_score < 0:
+        return make_response(
+            jsonify({"error": "IMDB_score should be between 0 to 10."}), 403
+        )
     try:
         db_cursor.execute("Select name from movies where name = %s", (name,))
         result_email = db_cursor.fetchall()
@@ -93,13 +112,29 @@ def Add_movie():
                 popularity,
             ),
         )
+        movie_id = db_cursor.lastrowid
+        gen_list = [str(gen) for gen in genre.split(",")]
+        genre_values = [
+            (
+                movie_id,
+                g,
+            )
+            for g in gen_list
+        ]
+        genre_query = "INSERT INTO genres (movie_id, genre) VALUES (%s, %s)"
+        db_cursor.executemany(genre_query, genre_values)
         dbConnect.commit()
-
         return make_response(
-            jsonify({"status": "Movie added Successfully", "name": name}), 201
+            jsonify(
+                {
+                    "status": "Movie added Successfully",
+                    "details": {"name": name, "id": movie_id},
+                }
+            ),
+            201,
         )
     except Error as e:
-        return make_response(jsonify({"error": "Server Error", "e": e}), 500)
+        return make_response(jsonify({"error": "Server Error", "e": str(e)}), 500)
 
 
 @movies.put("/update/<id>")
@@ -112,9 +147,11 @@ def Update_movie(id):
     popularity = request.json.get("popularity")
 
     if name is None:
-        return make_response(jsonify({"error": "Name cannot be Empty"}), 400)
-    if imdb_score > 10:
-        return make_response(jsonify({"error": "IMDB_score must not exceed 10."}), 403)
+        return make_response(jsonify({"error": "Movie name cannot be Empty"}), 400)
+    if imdb_score > 10 or imdb_score < 0:
+        return make_response(
+            jsonify({"error": "IMDB_score should be between 0 to 10."}), 403
+        )
 
     try:
         db_cursor.execute(
@@ -127,6 +164,20 @@ def Update_movie(id):
 
         q = "UPDATE movies SET director = %s,genre = %s, imdb_score = %s,name = %s, popularity = %s WHERE id = %s"
         db_cursor.execute(q, (director, genre, imdb_score, name, popularity, id))
+        dbConnect.commit()
+
+        db_cursor.execute("DELETE FROM genres WHERE movie_id = %s", (id,))
+
+        gen_list = [str(gen) for gen in genre.split(",")]
+        genre_values = [
+            (
+                id,
+                g,
+            )
+            for g in gen_list
+        ]
+        genre_query = "INSERT INTO genres (movie_id, genre) VALUES (%s, %s)"
+        db_cursor.executemany(genre_query, genre_values)
         dbConnect.commit()
 
         return make_response(
@@ -144,7 +195,7 @@ def Update_movie(id):
             201,
         )
     except Error as e:
-        return make_response(jsonify({"error": "Server Error"}), 500)
+        return make_response(jsonify({"error": "Server Error", "e": str(e)}), 500)
 
 
 @movies.delete("/delete/<int:id>")
@@ -153,20 +204,26 @@ def Delete_movie(id):
     try:
         db_cursor.execute("Select name from movies where id = %s", (id,))
         result_movie = db_cursor.fetchall()
-        # print(result_movie)
+        print(result_movie)
         if not len(result_movie):
             return jsonify({"error": f"Movie does not Exist with id = {id}."}), 400
 
-        db_cursor.execute("DELETE FROM movies WHERE id = %s", (id,))
+        db_cursor.execute(
+            "DELETE FROM movies WHERE id = %s",
+            (id,),
+        )
+        # db_cursor.execute("DELETE FROM genres WHERE movie_id = %s", (id,))
+        # added cascading with fkeys
         dbConnect.commit()
+        print("Here")
         return make_response(
             jsonify(
                 {
                     "status": "Movie Deleted Successfully",
                     "movie-id": id,
-                    "movie-name": result_movie[0][0],
                 }
-            )
+            ),
+            200,
         )
-    except Error:
-        return make_response(jsonify({"error": "Server Error", "e": Error}), 500)
+    except Error as e:
+        return make_response(jsonify({"error": "Server Error", "e": str(e)}), 500)

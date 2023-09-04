@@ -1,8 +1,14 @@
 import mysql.connector
 from mysql.connector import Error
 
+# dbConnect = mysql.connector.connect(
+#     host="localhost", user="root", passwd="744542", database="moviedb"
+# )
 dbConnect = mysql.connector.connect(
-    host="localhost", user="root", passwd="744542", database="moviedb"
+    host="sql12.freesqldatabase.com",
+    user="sql12644167",
+    passwd="T7PVr3i5GD",
+    database="sql12644167",
 )
 
 if dbConnect.is_connected():

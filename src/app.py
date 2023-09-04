@@ -20,7 +20,7 @@ def custom_unauthorized_callback(error_string):
 
 @app.route("/")
 def Home():
-    return jsonify("Hello World!")
+    return jsonify("Namaste! This API is developed by Prakash.")
 
 
 app.register_blueprint(auth)

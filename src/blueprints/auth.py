@@ -6,9 +6,9 @@ import datetime
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
-    set_access_cookies,
-    set_refresh_cookies,
     unset_jwt_cookies,
+    jwt_required,
+    get_jwt_identity,
 )
 from database import db_cursor, dbConnect
 
@@ -32,7 +32,7 @@ def Register():
         return jsonify({"error": "Password is too short."}), 400
 
     if username is None:
-        return jsonify({"error": "Username cannot be empty"})
+        return jsonify({"error": "Username cannot be empty"}), 400
     elif len(username) < 3:
         return jsonify({"error": "Username is too short."}), 400
     elif not username.isalnum() or " " in username:
@@ -61,7 +61,7 @@ def Register():
     )
     dbConnect.commit()
 
-    return jsonify({"status": "Registeration Successfull", "username": username})
+    return jsonify({"status": "Registeration Successfull", "username": username}), 201
 
 
 @auth.post("/login")
@@ -79,16 +79,20 @@ def Login():
     if not check_password_hash(str_password, password):
         return jsonify({"error": "Incorrect Password"}), 501
 
-    content = jsonify({"status": "Login Successful", "Time": dt.now()})
-    resp = make_response(content, 200)
-
     refresh = create_refresh_token(identity=username)
     access = create_access_token(
         identity=username, expires_delta=datetime.timedelta(minutes=60)
     )
 
-    set_access_cookies(resp, access)
-    set_refresh_cookies(resp, refresh)
+    content = jsonify(
+        {
+            "status": "Login Successful",
+            "Time": dt.now(),
+            "access_token": access,
+            "refresh_token": refresh,
+        }
+    )
+    resp = make_response(content, 200)
 
     return resp
 
@@ -98,3 +102,11 @@ def Logout():
     resp = make_response(jsonify("Logout successful"), 200)
     unset_jwt_cookies(resp)
     return resp
+
+
+@auth.post("/refresh")
+@jwt_required(refresh=True)  # Requires a valid refresh token
+def refresh():
+    current_user = get_jwt_identity()
+    new_access_token = create_access_token(identity=current_user)
+    return {"access_token": new_access_token}
