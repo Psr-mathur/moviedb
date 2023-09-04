@@ -1,7 +1,6 @@
 from flask import Flask, jsonify
 from flask_jwt_extended import JWTManager, jwt_required
-from blueprints.auth import auth
-from blueprints.movies import movies
+from routes import auth, movies
 
 app = Flask(__name__)
 
