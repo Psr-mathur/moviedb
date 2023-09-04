@@ -5,7 +5,7 @@ This is the documentation for the Moviedb API.
 [![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)](https://travis-ci.org/joemccann/dillinger)
 
 ## Base URL
-`http://localhost:4000`  || `https://moviedbserver.onrender.com`
+`http://localhost:4000`  || `https://moviedbserver-feey.onrender.com`
 
 ## Authentication
 This API uses JSON Web Tokens (JWT) for authentication. To access protected endpoints, you need to include a valid JWT token in the `Authorization` header of your requests.
